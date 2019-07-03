@@ -12,7 +12,7 @@
 ### 如何使用它?
 
 ```shell
->>> git clone https://github.com/TesterlifeRaymond/BeautifulReport
+>>> git clone https://github.com/autophyte/BeautifulReport.git
 >>> cp -R BeautifulReport to/python/site-packages/
 ```
 

@@ -7073,7 +7073,7 @@
                     <table class="table table-bordered">
                         <thead>
                         <tr>
-                            <th>编号</th><th>测试类</th><th>测试方法</th><th>用例描述</th><th>耗时</th><th>结果</th><th>操作</th>
+                            <th>编号</th><th>测试类</th><th>测试方法</th><th>用例描述</th><th>分组</th><th>优先级</th><th>严重程度</th><th>耗时</th><th>结果</th><th>操作</th>
                         </tr>
                         </thead>
                         <tbody id="detailBody">
@@ -7214,6 +7214,9 @@
                         "<td>" + n["className"] + "</td>" +
                         "<td>" + n["methodName"] + "</td>" +
                         "<td>" + n["description"] + "</td>" +
+                        "<td>" + n["group"] + "</td>" +
+                        "<td>" + n["priority"] + "</td>" +
+                        "<td>" + n["severity"] + "</td>" +
                         "<td>" + n["spendTime"] + "</td>" +
                         status + "<td><button type='button' onclick='details(this)' buttonIndex='" + i + "' class='btn btn-primary btn-xs' style='margin-bottom: 0px'>展开</button></td></tr>"
                     $("#detailBody").append(tr);
