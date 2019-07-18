@@ -99,6 +99,8 @@ class MakeResultJson:
             'className',
             'methodName',
             'description',
+            'send',
+            'response',
             'group',
             'priority',
             'severity',
@@ -219,7 +221,10 @@ class ReportTestResult(unittest.TestResult):
         :param test:
         :return:
         """
-        return tuple([*self.get_testcase_property(test), self.end_time, self.status, self.case_log])
+        return tuple([*self.get_testcase_property(test),
+                      *self.get_testcase_data_resp(test),
+                      *self.get_testcase_group(test),
+                      self.end_time, self.status, self.case_log])
 
     @staticmethod
     def error_or_failure_text(err) -> str:
@@ -325,6 +330,21 @@ class ReportTestResult(unittest.TestResult):
         self.case_log = case_log
 
     @staticmethod
+    def get_testcase_group(test) -> tuple:
+        try:
+            group, priority, severity = test.get_extrainfo()
+        except AttributeError:
+            group, priority, severity = 0, 0, 0
+        return group, priority, severity
+
+    @staticmethod
+    def get_testcase_data_resp(test) -> tuple:
+        try:
+            return test.get_test_data()
+        except AttributeError:
+            return "", ""
+
+    @staticmethod
     def get_testcase_property(test) -> tuple:
         """
             接受一个test, 并返回一个test的class_name, method_name, method_doc属性
@@ -334,11 +354,7 @@ class ReportTestResult(unittest.TestResult):
         class_name = test.__class__.__qualname__
         method_name = test.__dict__['_testMethodName']
         method_doc = test.__dict__['_testMethodDoc']
-        try:
-            group, priority, severity = test.get_extrainfo()
-        except AttributeError:
-            group, priority, severity = 0, 0, 0
-        return class_name, method_name, method_doc, group, priority, severity
+        return class_name, method_name, method_doc
 
 
 class BeautifulReport(ReportTestResult, PATH):
