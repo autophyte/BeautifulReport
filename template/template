@@ -3227,6 +3227,9 @@
 
         .data {
             white-space: pre-wrap !important;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
         }
         .panel.blank-panel {
             background: 0 0;
