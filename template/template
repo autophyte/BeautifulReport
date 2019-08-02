@@ -6990,7 +6990,7 @@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-sm-6 b-r" style="height:350px">
+                        <div class="col-sm-6 b-r" style="height:380px">
                             <form class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label text-navy">用例名称:</label>
@@ -7034,6 +7034,12 @@
                                         <span class="form-control" id="totalTime"></span>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label text-navy">默认地址:</label>
+                                    <div class="col-sm-5">
+                                        <span class="form-control" id="default_host"></span>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                         <div class="col-sm-6">
@@ -7066,6 +7072,10 @@
                         </select>
                         <label style="color: snow">结果:</label>
                         <select class="chosen-select form-control" data-placeholder="----------" style="width: 300px;" name="filterResult" id="filterResult">
+                            <option value="">----------</option>
+                        </select>
+                        <label style="color: snow">分组:</label>
+                        <select class="chosen-select form-control" data-placeholder="----------" style="width: 300px;" name="filterResult" id="filterGroup">
                             <option value="">----------</option>
                         </select>
                         <div style="float: right">
@@ -7169,18 +7179,23 @@
         $("#testAll").text(resultData["testAll"]);
         $("#beginTime").text(resultData["beginTime"]);
         $("#totalTime").text(resultData["totalTime"]);
+        $("#default_host").text(resultData["default_host"]);
         $("#filterAll").text(resultData["testAll"]);
         $("#filterOk").text(resultData["testPass"]);
         $("#filterFail").text(resultData["testFail"]);
         $("#filterSkip").text(resultData["testSkip"]);
         var classNames = [];
         var results = [];
+        var group_names = [];
         $.each(resultData["testResult"], function (i, n) {
             if (classNames.indexOf(n["className"]) == -1) {
                 classNames.push(n["className"]);
             }
             if (results.indexOf(n["status"]) == -1) {
                 results.push(n["status"]);
+            }
+            if (group_names.indexOf(n["group"]) == -1) {
+                group_names.push(n["group"]);
             }
         });
 
@@ -7190,18 +7205,22 @@
         $.each(results, function (i, n) {
             $("#filterResult").append("<option value='" + n + "' hassubinfo='true'>" + n + "</option>");
         });
+        $.each(group_names, function (i, n) {
+            $("#filterGroup").append("<option value='" + n + "' hassubinfo='true'>" + n + "</option>");
+        });
 
         $("#filterClass").chosen({search_contains: true});
         $("#filterResult").chosen({search_contains: true});
+        $("#filterGroup").chosen({search_contains: true});
 
-        function generateResult(className, caseResult) {
+        function generateResult(className, caseResult, group_name) {
             $("#detailBody").children().remove();
             var filterAll = 0;
             var filterOk = 0;
             var filterFail = 0;
             var filterSkip = 0;
             $.each(resultData["testResult"], function (i, n) {
-                if ((className == "" || n["className"] == className) && (caseResult == "" || n["status"] == caseResult)) {
+                if ((className == "" || n["className"] == className) && (caseResult == "" || n["status"] == caseResult) && (group_name == "" || n["group"] == group_name)) {
                     filterAll += 1;
                     var status = "";
                     if (n["status"] == '成功') {
@@ -7237,18 +7256,27 @@
             $("#filterSkip").text(filterSkip);
         }
 
-        generateResult("", "");
+        generateResult("", "", "");
 
         $("#filterClass").on('change', function () {
             var className = $("#filterClass").val();
             var caseResult = $("#filterResult").val();
-            generateResult(className, caseResult);
+            var group_name = $("#filterGroup").val();
+            generateResult(className, caseResult, group_name);
         });
 
         $("#filterResult").on('change', function () {
             var className = $("#filterClass").val();
             var caseResult = $("#filterResult").val();
-            generateResult(className, caseResult);
+            var group_name = $("#filterGroup").val();
+            generateResult(className, caseResult, group_name);
+        });
+
+        $("#filterGroup").on('change', function () {
+            var className = $("#filterClass").val();
+            var caseResult = $("#filterResult").val();
+            var group_name = $("#filterGroup").val();
+            generateResult(className, caseResult, group_name);
         });
 
         //$(".chosen-select").trigger("chosen:updated");

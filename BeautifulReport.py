@@ -193,7 +193,7 @@ class ReportTestResult(unittest.TestResult):
             self.sys_stdout = None
         return self.outputBuffer.getvalue()
 
-    def stopTestRun(self, title=None) -> dict:
+    def stopTestRun(self, title=None, **kwargs) -> dict:
         """
             所有测试执行完成后, 执行该方法
         :param title:
@@ -210,6 +210,7 @@ class ReportTestResult(unittest.TestResult):
         end_time = int(time.time())
         start_time = int(time.mktime(time.strptime(self.begin_time, '%Y-%m-%d %H:%M:%S')))
         FIELDS['totalTime'] = str(end_time - start_time) + 's'
+        FIELDS['default_host'] = kwargs.get("default_host", "")
         FIELDS['testError'] = self.error_count
         FIELDS['testSkip'] = self.skipped
         self.FIELDS = FIELDS
@@ -367,12 +368,13 @@ class BeautifulReport(ReportTestResult, PATH):
         self.title = '自动化测试报告'
         self.filename = 'report.html'
 
-    def report(self, description, filename: str = None, log_path='.'):
+    def report(self, description, filename: str = None, log_path='.', **kwargs):
         """
             生成测试报告,并放在当前运行路径下
         :param log_path: 生成report的文件存储路径
         :param filename: 生成文件的filename
         :param description: 生成文件的注释
+		:Param kwargs: 其他关健字参数
         :return:
         """
         if filename:
@@ -383,7 +385,7 @@ class BeautifulReport(ReportTestResult, PATH):
 
         self.log_path = os.path.abspath(log_path)
         self.suites.run(result=self)
-        self.stopTestRun(self.title)
+        self.stopTestRun(self.title, **kwargs)
         self.output_report()
         text = '\n测试已全部完成, 可前往{}查询测试报告'.format(self.log_path)
         print(text)
